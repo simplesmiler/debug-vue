@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Examples for DebugVue</title>
+  <script src="https://unpkg.com/vue@2.2.0"></script>
+  <script src="https://unpkg.com/lodash"></script>
+  <script src="../dist/debug-vue.js"></script>
+</head>
+<body>
+
+  <h3><code>Intro</code></h3>
+
+  <p>DebugVue is a set of components designed to assist with debugging Vue.js applications. At the moment it consists of two components:</p>
+
+  <ul>
+    <li><code>DebugHook</code> for lifecycle hooks</li>
+    <li><code>DebugWatch</code> for data changes</li>
+  </ul>
+
+  <p>Open your devtools before proceeding. Checkboxes bellow control the presence of corresponding components via <code>v-if</code>.</p>
+
+  <hr/>
+
+  <h3><code>Example 1: DebugHook</code></h3>
+
+  <div id="example1">
+
+    <p>Default hook is <code>mounted</code>, but a few others are also supported, namely <code>beforeMount</code>, <code>created</code> and <code>beforeDestroy</code>.</p>
+
+    <p>
+      <label><input type="checkbox" v-model="enable1"> <code>&lt;debug-hook/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enable2"> <code>&lt;debug-hook on="beforeMount"/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enable3"> <code>&lt;debug-hook :on="['created', 'beforeDestroy']"/&gt;</code><label>
+    </p>
+
+    <debug-hook v-if="enable1"></debug-hook>
+    <debug-hook v-if="enable2" on="beforeMount"></debug-hook>
+    <debug-hook v-if="enable3" :on="['created', 'beforeDestroy']"></debug-hook>
+
+    <p>Besides hitting a breakpoint, you can also pass a value to be inspected.</p>
+
+    <p><label><input type="checkbox" v-model="enable4"> <code>&lt;debug-hook :value="3.14"/&gt;</code><label></p>
+    <debug-hook v-if="enable4" :value="3.14"></debug-hook>
+
+  </div>
+
+  <hr/>
+
+  <h3><code>Example 2: DebugHook on parent</code></h3>
+
+  <div id="example2">
+
+    <p>Now, what about <code>beforeUpdate</code> and <code>updated</code>? You can listen for these hooks on the parent.</p>
+
+    <p><label><input type="checkbox" v-model="enableTextHook"> <code>&lt;debug-hook parent on="updated"/&gt;</code><label></p>
+    <div>
+      <p><input type="text" v-model="text"></p>
+      <debug-hook v-if="enableTextHook" parent on="updated"></debug-hook>
+    </div>
+
+  </div>
+
+  <hr/>
+
+  <h3><code>Example 3: DebugWatch</code></h3>
+  <div id="example3">
+
+    <p>You can watch data changes just as easyly.</p>
+    
+    <p>
+      <label><input type="checkbox" v-model="enableNonImmediate"> <code>&lt;debug-watch :value="text"/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enableImmediate"> <code>&lt;debug-watch immediate :value="text"/&gt;</code><label>
+    </p>
+    <div>
+      <p><input type="text" v-model="text"></p>
+      <debug-watch v-if="enableNonImmediate" :value="text"></debug-watch>
+      <debug-watch v-if="enableImmediate" immediate :value="text"></debug-watch>
+    </div>
+    
+    <p>
+      <label><input type="checkbox" v-model="enableNonDeep"> <code>&lt;debug-watch :value="person"/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enableDeep"> <code>&lt;debug-watch deep :value="person"/&gt;</code><label>
+    </p>
+    <div>
+      <p><input type="text" v-model="person.firstName"> <input type="text" v-model="person.lastName"></p>
+      <debug-watch v-if="enableNonDeep" :value="person"></debug-watch>
+      <debug-watch v-if="enableDeep" deep :value="person"></debug-watch>
+    </div>
+
+  </div>
+
+  <hr/>
+
+  <h3><code>Example 4: Common options</code></h3>
+  <div id="example4">
+
+    <p>By default, DebugVue components clone the data to clean it up from those pesky Observers. But if your data can not be easily cloned you can disable this behavior.</p>
+
+    <p>
+      <label><input type="checkbox" v-model="enable1"> <code>&lt;debug-hook :value="reactiveData"/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enable2"> <code>&lt;debug-hook :value="reactiveData" no-clone/&gt;</code><label>
+    </p>
+
+    <debug-hook v-if="enable1" :value="reactiveData"></debug-hook>
+    <debug-hook v-if="enable2" :value="reactiveData" no-clone></debug-hook>
+
+    <p>Also there are options to disable breakpoints and logging altogether.</p>
+
+    <p>
+      <label><input type="checkbox" v-model="enable3"> <code>&lt;debug-hook no-break/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enable4"> <code>&lt;debug-hook no-log/&gt;</code><label>
+    </p>
+
+    <debug-hook v-if="enable3" no-break></debug-hook>
+    <debug-hook v-if="enable4" no-log></debug-hook>
+
+    <p>When you have to use multiple breakpoints, you can identify them by giving them names.</p>
+
+    <p>
+      <label><input type="checkbox" v-model="enable5"> <code>&lt;debug-hook name="alpha"/&gt;</code><label>
+      <br>
+      <label><input type="checkbox" v-model="enable6"> <code>&lt;debug-hook name="beta"/&gt;</code><label>
+    </p>
+
+    <debug-hook v-if="enable5" name="alpha"></debug-hook>
+    <debug-hook v-if="enable6" name="beta"></debug-hook>
+
+    All of these options apply to DebugWatch as well.
+
+  </div>
+
+  <script>
+    new Vue({
+      el: '#example1',
+      data: {
+        enable1: false,
+        enable2: false,
+        enable3: false,
+        enable4: false,
+      },
+    });
+
+    new Vue({
+      el: '#example2',
+      data: {
+        text: 'She sells seashells',
+        enableTextHook: false,
+      },
+    });
+
+    new Vue({
+      el: '#example3',
+      data: {
+        text: 'Alice and Bob',
+        enableNonImmediate: false,
+        enableImmediate: false,
+        person: {
+          firstName: 'Bobby',
+          lastName: 'Tables',
+        },
+        enableNonDeep: false,
+        enableDeep: false,
+      },
+    });
+
+    new Vue({
+      el: '#example4',
+      data: {
+        reactiveData: {
+          types: [
+            { id: 1, name: 'fruit' },
+            { id: 2, name: 'vegetable' },
+          ],
+          items: [
+            { id: 1, type: 1, name: 'banana' },
+            { id: 2, type: 2, name: 'tomato' },
+          ],
+        },
+        enable1: false,
+        enable2: false,
+        enable3: false,
+        enable4: false,
+        enable5: false,
+        enable6: false,
+      },
+    });
+  </script>
+
+</body>
+</html>
