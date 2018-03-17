@@ -8,7 +8,7 @@ export default {
     noBreak: { type: Boolean, default: false },
   },
 
-  render: function(h) {
+  render: function() {
     return null;
   },
 
